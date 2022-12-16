@@ -73,3 +73,10 @@ export const getRentalLogs = async (id) => {
   const result = await res.json();
   return result;
 };
+
+export const differenceInMonths = (date1, date2) => {
+  const monthDiff = date1.getMonth() - date2.getMonth();
+  const yearDiff = date1.getYear() - date2.getYear();
+
+  return monthDiff + yearDiff * 12;
+};

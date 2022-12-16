@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   createRentalBill,
+  differenceInMonths,
   getRentalLogs,
   getRentalRequest,
   updateRentalStatus,
@@ -112,6 +113,7 @@ const RentalPayment = () => {
     }
     setIsLoading(false);
   };
+
   const approvedHandler = async () => {
     setSuccess(-1);
     setIsLoading(true);
@@ -122,9 +124,16 @@ const RentalPayment = () => {
 
     if (res1.success) {
       const count = res1.data.filter((r) => r.status == "approved");
-      const started = moment(receiver?.startofrent).month();
-      const now = moment().month();
-      if (now - started - count.length == 0) {
+      const now = moment().clone().format("YYYY-MM-DD");
+      const id = await getTenant(action.data.tenantid);
+      console.log(id);
+      const started = moment(id.data?.startofrent).format("YYYY-MM-DD");
+      console.log(differenceInMonths(new Date(now), new Date(started)));
+      if (
+        differenceInMonths(new Date(now), new Date(started)) - count.length ==
+        0
+      ) {
+        console.log(action.data?.rentstarted);
         setSuccess(9);
         return;
       }
@@ -134,8 +143,9 @@ const RentalPayment = () => {
         return;
       }
       const newData = {
-        tenantbalance: balance,
+        tenantbalance: await balanceHandler(),
       };
+      console.log(newData);
       const res2 = await updateUser(action.data.tenantid, newData);
       if (res2.success) {
         const res = await updateRentalStatus(action.data._id, {
@@ -158,16 +168,25 @@ const RentalPayment = () => {
   const balanceHandler = async () => {
     let res = null;
     let count = [];
-    res = await getRentalLogs(receiver?._id);
+    res = await getRentalLogs(receiver?._id || action.data.tenantid);
     count = res.data.filter((r) => r.status == "approved");
     console.log(count);
     // if (res.success) {
     // console.log("c", count.length);
-    const started = moment(receiver.startofrent).month();
-    const now = moment().month();
-    rentalBillCountRef.current = now - started - count.length;
-
-    return (rentalBillCountRef.current - 1) * parseFloat(receiver.rentamount);
+    const id = await getTenant(receiver?._id || action.data.tenantid);
+    console.log(id);
+    const started = moment(
+      receiver?.startofrent || id.data?.startofrent
+    ).format("YYYY-MM-DD");
+    const now = moment().clone().format("YYYY-MM-DD");
+    rentalBillCountRef.current =
+      differenceInMonths(new Date(now), new Date(started)) - count.length;
+    console.log(started, now);
+    console.log(action.data);
+    return (
+      (rentalBillCountRef.current - 1) *
+      parseFloat(receiver?.rentamount || action.data.amount)
+    );
   };
   const createHandler = async () => {
     // console.log(receiver);

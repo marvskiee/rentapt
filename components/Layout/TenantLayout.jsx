@@ -17,7 +17,10 @@ import { storage } from "../../services/firebase";
 import moment from "moment";
 import { NotVisible, VisibleSvg } from "../Svg";
 import Link from "next/link";
-import { getRentalLogs } from "../../services/rental.services";
+import {
+  differenceInMonths,
+  getRentalLogs,
+} from "../../services/rental.services";
 const TenantLayout = ({ modify, cancel, old, reload }) => {
   useEffect(() => {
     if (modify) {
@@ -330,9 +333,10 @@ const TenantLayout = ({ modify, cancel, old, reload }) => {
     console.log(count);
     // if (res.success) {
     // console.log("c", count.length);
-    const started = moment(startrentRef.current.value).month();
-    const now = moment().month();
-    rentalBillCountRef.current = now - started - count.length;
+    const started = moment(startrentRef.current.value);
+    const now = moment().clone();
+    rentalBillCountRef.current =
+      differenceInMonths(new Date(now), new Date(started)) - count.length;
 
     return rentalBillCountRef.current * rentAmountRef.current.value;
   };

@@ -7,6 +7,7 @@ import {
 } from "../../components";
 import {
   createRentalBill,
+  differenceInMonths,
   getRentalLogs,
 } from "../../services/rental.services";
 import { useAppContext } from "../../context/AppContext";
@@ -46,9 +47,10 @@ const RentalPayment = () => {
       if (res.success) {
         const count = res.data.filter((r) => r.status == "approved");
         console.log("c", count.length);
-        const started = moment(state?.user?.startofrent).month();
-        const now = moment().month();
-        rentalBillCountRef.current = now - started - count.length;
+        const started = moment(state?.user?.startofrent).format("YYYY-MM-DD");
+        const now = moment().format("YYYY-MM-DD");
+        rentalBillCountRef.current =
+          differenceInMonths(new Date(now), new Date(started)) - count.length;
         console.log(now - started - count.length);
         setLogs(res.data);
       }
