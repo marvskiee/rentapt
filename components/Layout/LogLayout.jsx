@@ -3,6 +3,7 @@ import moment from "moment";
 import { useState, useRef } from "react";
 import ModalLayout from "./ModalLayout";
 import { useEffect } from "react";
+import { nFormat } from "../../services/money.services";
 const LogLayout = ({ data }) => {
   const [imageModal, setImageModal] = useState(null);
   const [page, setPage] = useState(1);
@@ -35,7 +36,7 @@ const LogLayout = ({ data }) => {
               >
                 <div>
                   <p className="text-xl font-semibold">{paymentmode}</p>
-                  <p>₱ {parseFloat(amount)}</p>
+                  <p>₱ {nFormat(parseFloat(amount))}</p>
                   {status == "approved" && (
                     <button
                       onClick={() =>
@@ -109,7 +110,9 @@ const LogLayout = ({ data }) => {
               <p className="font-semibold text-2xl">Transaction ID#</p>{" "}
               <p>{imageModal._id}</p>
               <p className="font-semibold">Amount Paid:</p>
-              <p className="font-semibold text-3xl">₱{imageModal?.amount}</p>
+              <p className="font-semibold text-3xl">
+                ₱{nFormat(imageModal?.amount)}
+              </p>
             </div>
             <p>
               <b>Payment Method:</b> {imageModal?.paymentmode}

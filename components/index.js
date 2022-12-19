@@ -5,6 +5,7 @@ export { default as SectionLayout } from "./Layout/SectionLayout.jsx";
 export { default as TenantLayout } from "./Layout/TenantLayout.jsx";
 export { default as FooterLayout } from "./Layout/FooterLayout.jsx";
 export { default as LogLayout } from "./Layout/LogLayout.jsx";
+export { default as RequestLayout } from "./Layout/RequestLayout.jsx";
 
 export { default as ReportTable } from "./Table/ReportTable.jsx";
 export { default as Alert } from "./Alert/index.jsx";

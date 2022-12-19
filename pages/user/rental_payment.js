@@ -22,6 +22,7 @@ import {
 import { v4 } from "uuid";
 import { storage } from "../../services/firebase";
 import { useEffect } from "react";
+import { nFormat } from "../../services/money.services";
 
 const RentalPayment = () => {
   const { state } = useAppContext();
@@ -221,7 +222,10 @@ const RentalPayment = () => {
                 Your Rent Balance
               </label>
               <p className="font-semibold text-4xl">
-                ₱{rentalBillCountRef?.current * state?.user?.rentamount || 0}
+                ₱
+                {nFormat(
+                  rentalBillCountRef?.current * state?.user?.rentamount || 0
+                )}
               </p>
             </div>
             <div className="flex flex-col justify-end">
@@ -233,7 +237,7 @@ const RentalPayment = () => {
             <div className="flex flex-col justify-end">
               <label className="text-lg">Amount</label>
               <p className="cursor-not-allowed px-4 p-2 rounded-md border border-slate-200">
-                {state?.user?.rentamount || 0}
+                {nFormat(state?.user?.rentamount || 0)}
               </p>
             </div>
             {fields.map(

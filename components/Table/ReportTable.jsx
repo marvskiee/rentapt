@@ -6,6 +6,7 @@ import { getUtilityBill } from "../../services/utility.services";
 import moment from "moment";
 import { DropletSvg, ThunderSvg, XSvg } from "../../components/Svg";
 import ModalLayout from "../Layout/ModalLayout";
+import { nFormat } from "../../services/money.services";
 const ReportTable = ({ tab }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState();
@@ -141,7 +142,9 @@ const ReportTable = ({ tab }) => {
               <p className="font-semibold text-2xl">Transaction ID#</p>{" "}
               <p>{imageModal._id}</p>
               <p className="font-semibold">Amount Paid:</p>
-              <p className="font-semibold text-3xl">₱{imageModal?.amount}</p>
+              <p className="font-semibold text-3xl">
+                ₱{nFormat(imageModal?.amount)}
+              </p>
             </div>
             <p>
               <b>Payment Method:</b> {imageModal?.paymentmode}
@@ -313,7 +316,7 @@ const ReportTable = ({ tab }) => {
                         Preview
                       </button>
                     ) : keys == "amount" ? (
-                      `₱ ${parseFloat(item[keys.replaceAll(" ", "")])}`
+                      `₱ ${nFormat(parseFloat(item[keys.replaceAll(" ", "")]))}`
                     ) : (
                       item[keys.replaceAll(" ", "")]
                     )}

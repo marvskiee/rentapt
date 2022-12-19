@@ -6,6 +6,7 @@ import {
   UpdateModal,
 } from "../../components";
 import { DeleteSvg, EditSvg, StatusSvg } from "../../components/Svg";
+import { nFormat } from "../../services/money.services";
 import {
   checkUnit,
   deleteUser,
@@ -143,7 +144,7 @@ const AccountMaintenance = () => {
                         : keys == "contact"
                         ? `(+63)${item.contact}`
                         : moneySign.includes(keys)
-                        ? `₱${item[keys.replace(" ", "")]}`
+                        ? `₱${nFormat(item[keys.replace(" ", "")])}`
                         : item[keys.replace(" ", "")]}
                     </td>
                   ))}

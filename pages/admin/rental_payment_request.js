@@ -14,6 +14,7 @@ import {
   getTenant,
   updateUser,
 } from "../../services/user.services";
+import { nFormat } from "../../services/money.services";
 
 const RentalPayment = () => {
   const [imageModal, setImageModal] = useState(null);
@@ -31,7 +32,7 @@ const RentalPayment = () => {
   const [newSlice, setNewSlice] = useState(null);
   const [receiver, setReceiver] = useState(null);
   const MAX = 10;
-
+  const [request, setRequest] = useState([]);
   const rentalBillCountRef = useRef(0);
 
   useEffect(() => {
@@ -268,10 +269,7 @@ const RentalPayment = () => {
               )}
               {receiver && (
                 <div>
-                  <p>
-                    Rent Amount:
-                    {receiver.rentamount}
-                  </p>
+                  <p>Rent Amount: ₱{nFormat(receiver.rentamount)}</p>
                   <p>Payment Mode: Cash</p>
                   <p>Payment Date: {moment().format("MMM DD, YYYY")}</p>
                 </div>
@@ -381,7 +379,9 @@ const RentalPayment = () => {
                           Preview
                         </button>
                       ) : keys == "amount" ? (
-                        `₱${parseInt(item[keys.replaceAll(" ", "")]) * 1}`
+                        `₱${nFormat(
+                          parseInt(item[keys.replaceAll(" ", "")]) * 1
+                        )}`
                       ) : (
                         item[keys.replaceAll(" ", "")]
                       )}
@@ -433,6 +433,7 @@ const RentalPayment = () => {
           ))}
         </div>
       </SectionLayout>
+      <RequestLayout />
     </div>
   );
 };

@@ -24,13 +24,16 @@ const RepairPayment = () => {
   const paymentRef = useRef();
   const descriptionRef = useRef();
   const [proofImage, setProofImage] = useState();
+  const [agreementImage, setAgreementImage] = useState();
+
   const [logs, setLogs] = useState([]);
   const [isLoading, setIsLoading] = useState();
   const [errors, setErrors] = useState();
   const [success, setSuccess] = useState(-1);
   const setProofUrlRef = useRef();
+  const setAgreementUrlRef = useRef();
   const paymentMethodRef = useRef();
-  const imageKeyRef = useRef([0]);
+  const imageKeyRef = useRef([0, 123123]);
 
   useEffect(() => {
     const load = async () => {
@@ -67,6 +70,7 @@ const RepairPayment = () => {
       paymentdate: paymentRef.current.value,
       description: descriptionRef.current.value,
       proofofpayment: setProofUrlRef.current,
+      proofofagreement: setAgreementUrlRef.current,
       paymentmode: paymentMethodRef.current?.value || "Gcash",
       status: "pending",
     };
@@ -74,7 +78,7 @@ const RepairPayment = () => {
     const res = await createRepairBill(newData);
     if (res.success) {
       let ran1 = Math.random().toString(36);
-      imageKeyRef.current = [ran1];
+      imageKeyRef.current = [ran1, ran1 * 23];
       clearForm();
       setSuccess(5);
     } else {
@@ -94,6 +98,23 @@ const RepairPayment = () => {
       .then((snapshot) => {
         getDownloadURL(snapshot.ref).then((url) => {
           setProofUrlRef.current = url;
+          uploadAgreement();
+        });
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  };
+  const uploadAgreement = () => {
+    if (agreementImage?.file == null) {
+      setIsLoading(false);
+      return;
+    }
+    const imageRef = ref(storage, `images/${agreementImage.file.name + v4()}`);
+    uploadBytes(imageRef, agreementImage.file)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((url) => {
+          setAgreementUrlRef.current = url;
           postSaveHandler();
         });
       })
@@ -125,6 +146,12 @@ const RepairPayment = () => {
       tempErrors = {
         ...tempErrors,
         proofError: "is required and must be less than 3mb only.",
+      };
+    }
+    if (agreementImage?.file.size > 3000000 || !agreementImage) {
+      tempErrors = {
+        ...tempErrors,
+        agreementError: "is required and must be less than 3mb only.",
       };
     }
     setErrors(tempErrors);
@@ -184,6 +211,23 @@ const RepairPayment = () => {
       },
       key: imageKeyRef?.current[0],
     },
+    {
+      label: "Proof of Agreement",
+      type: "file",
+      error: errors?.agreementError,
+      value: agreementImage,
+      changehandler: (e) => {
+        try {
+          setAgreementImage({
+            url: URL?.createObjectURL(e.target?.files[0]),
+            file: e.target?.files[0],
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      key: imageKeyRef?.current[1],
+    },
   ];
   return (
     <div>
@@ -209,14 +253,25 @@ const RepairPayment = () => {
                     {label}
                   </label>
                   {type == "file" ? (
-                    <input
-                      key={key}
-                      id={label.toLowerCase().replace(" ", "")}
-                      type={type}
-                      className="px-4 p-2 rounded-md border border-slate-200"
-                      onChange={changehandler}
-                      accept="image/*"
-                    />
+                    <div className="flex items-center justify-between gap-4">
+                      <input
+                        key={key}
+                        id={label.toLowerCase().replace(" ", "")}
+                        type={type}
+                        className="w-full px-4 p-2 rounded-md border border-slate-200"
+                        onChange={changehandler}
+                        accept="image/*"
+                      />
+                      {label == "Proof of Agreement" && (
+                        <div>
+                          <a target="_blank" href="/agreement.docx">
+                            <button className="rounded-md p-2  text-sm bg-violet-500 text-white">
+                              Download Repair Agreement{" "}
+                            </button>
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   ) : type == "textarea" ? (
                     <textarea
                       rows={5}

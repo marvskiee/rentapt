@@ -5,13 +5,20 @@ import {
   updateRepairStatus,
 } from "../../services/repair.services";
 import moment from "moment";
-import { Alert, ModalLayout, SectionLayout } from "../../components";
+import {
+  Alert,
+  ModalLayout,
+  RequestLayout,
+  SectionLayout,
+} from "../../components";
 import { CheckSvg, DeclineSvg } from "../../components/Svg";
 import {
   getAllUsers,
   getTenant,
   updateUser,
 } from "../../services/user.services";
+import { nFormat } from "../../services/money.services";
+import { getRequest } from "../../services/request.services";
 
 const RepairPayment = () => {
   const [imageModal, setImageModal] = useState(null);
@@ -29,6 +36,8 @@ const RepairPayment = () => {
   const repairAmountRef = useRef();
   const descriptionRef = useRef();
   const mountedRef = useRef();
+  const [request, setRequest] = useState([]);
+
   // const [action, setAction] = useState({ data: null, mode: null });
   const [newSlice, setNewSlice] = useState(null);
   const MAX = 10;
@@ -36,6 +45,13 @@ const RepairPayment = () => {
     setIsLoading(true);
     fetchRepair();
     usersList();
+    const load = async () => {
+      const res = await getRequest();
+      if (res.success) {
+        setRequest(res.data);
+      }
+    };
+    load();
   }, []);
   const paginationHandler = (item) => {
     setPage(item);
@@ -49,7 +65,13 @@ const RepairPayment = () => {
       // setUnits(res.data);
     }
   };
-  const headers = ["unit", "payment date", "amount", "proof of payment"];
+  const headers = [
+    "unit",
+    "payment date",
+    "amount",
+    "proof of payment",
+    "proof of agreement",
+  ];
   const fetchRepair = async () => {
     const res = await getRepairRequest();
     if (res.success) {
@@ -314,8 +336,19 @@ const RepairPayment = () => {
                         >
                           Preview
                         </button>
+                      ) : keys == "proof of agreement" ? (
+                        <button
+                          className="p-2 px-4 rounded-md bg-violet-500 text-white"
+                          onClick={() =>
+                            setImageModal(item["proofofagreement"])
+                          }
+                        >
+                          Preview
+                        </button>
                       ) : keys == "amount" ? (
-                        `₱${parseInt(item[keys.replaceAll(" ", "")]) * 1}`
+                        `₱${nFormat(
+                          parseInt(item[keys.replaceAll(" ", "")]) * 1
+                        )}`
                       ) : (
                         item[keys.replaceAll(" ", "")]
                       )}
@@ -366,6 +399,7 @@ const RepairPayment = () => {
             </button>
           ))}
         </div>
+        <RequestLayout data={request} />
       </SectionLayout>
     </div>
   );

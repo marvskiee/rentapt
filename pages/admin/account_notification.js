@@ -3,6 +3,7 @@ import { SectionLayout, Alert } from "../../components";
 import { createRentalReminder } from "../../services/rental.services";
 import { getAllUsers } from "../../services/user.services";
 import moment from "moment";
+import { nFormat } from "../../services/money.services";
 const AccountNotification = () => {
   const [units, setUnits] = useState([]);
   const senderRef = useRef();
@@ -124,7 +125,8 @@ const AccountNotification = () => {
                 className="p-2 px-4 rounded-md border"
                 type="date"
               />{" "}
-              with the current balance amount of ₱ {receiver?.rentamount || 0}
+              with the current balance amount of ₱{" "}
+              {nFormat(receiver?.rentamount || 0)}
               .<br /> You may settle the payment through gcash or by visiting
               our office. Thank you, and have a nice day.
             </p>

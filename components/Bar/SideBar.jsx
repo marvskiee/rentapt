@@ -122,10 +122,10 @@ const SideBar = () => {
               src={state?.user.profile}
               className="w-52 border-4 rounded-md object-cover object-top aspect-square "
             />
-            <p className="text-white">Tenant Name:</p>
             <p className="text-white">
               {state?.user.firstname} {state?.user.lastname}
             </p>
+            <p className="text-white">Unit: {state?.user?.unit}</p>
           </div>
         )}
         {pageData &&
