@@ -433,7 +433,6 @@ const RentalPayment = () => {
           ))}
         </div>
       </SectionLayout>
-      <RequestLayout />
     </div>
   );
 };
