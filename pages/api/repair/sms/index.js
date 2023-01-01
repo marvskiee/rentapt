@@ -3,28 +3,27 @@ export default async (req, res) => {
   switch (method) {
     case "POST":
       try {
-        const { Vonage } = require("@vonage/server-sdk");
-        const vonage = new Vonage(
-          {
-            apiKey: process.env.VONAGE_API_KEY,
-            apiSecret: process.env.VONAGE_API_SECRET,
-            signatureSecret: process.env.VONAGE_SIGNATURE_SECRET,
-            signatureMethod: "MD5 HASH signature",
-          },
-          { debug: true }
-        );
-        const resp = await vonage.sms.send({
-          to: "639959151063",
-          from: "Rent Apt",
-          text: req.body?.message,
-        });
-        console.log(resp);
-        res.status(200).json({ success: true });
-      } catch (error) {
-        res.status(200).json({ success: false, message: error.message });
+        const URI = "https://api.semaphore.co/api/v4/messages";
+        await fetch(URI, {
+          method: "POST",
+          mode: "cors",
+          body: JSON.stringify({
+            message: req.body?.message,
+            number: "639959151063",
+            apikey: process.env.SMS_API,
+          }),
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => {
+            return res.status(200).json({ success: true, data: response });
+          })
+          .catch((e) => {
+            return res.status(500).json({ success: false, error: e });
+          });
+      } catch (e) {
+        res.status(500).json({ success: false, error: e });
       }
       break;
-
     default:
       res.status(400).json({ success: false });
       break;
