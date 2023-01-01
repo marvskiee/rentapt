@@ -3,7 +3,7 @@ export default async (req, res) => {
   switch (method) {
     case "POST":
       try {
-        const URI = "https://api.semaphore.co/api/v4/messages";
+        const URI = "https://api.semaphore.co/api/v4/priority";
         await fetch(URI, {
           method: "POST",
           mode: "cors",
