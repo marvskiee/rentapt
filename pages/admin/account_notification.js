@@ -42,9 +42,10 @@ const AccountNotification = () => {
     if (verifyHandler()) {
       const newDate = moment(dateRef.current.value).format("MMM DD ,YYYY");
       const newData = {
-        mobile_number: receiver?.contact,
+        number: receiver?.contact,
         message: `Good day ${receiver?.firstname} ${receiver?.lastname}, This is a reminder your last payment is from ${newDate} with the current balance amount of PHP ${receiver.rentamount}. You may settle the payment through gcash or by visiting our office. Thank you, and have a nice day.`,
       };
+      console.log(newData);
       const res = await createRentalReminder(newData);
       if (res.success) {
         setSuccess(4);
