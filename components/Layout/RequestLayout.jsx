@@ -25,7 +25,7 @@ const RequestLayout = ({ data }) => {
       <div className="h-screen max-h-logs">
         {data?.length > 0 ? (
           newSlice &&
-          newSlice?.map(({ sms, image, createdAt }, index) => (
+          newSlice?.map(({ sms, image, created_at }, index) => (
             <div
               className="border-b-2 p-4 flex items-start justify-between w-full"
               key={index}
@@ -44,7 +44,7 @@ const RequestLayout = ({ data }) => {
                 </button>
               </div>
               <div>
-                <p>{moment(createdAt).format("MMM DD, YYYY")}</p>
+                <p>{moment(created_at).format("MMM DD, YYYY")}</p>
               </div>
             </div>
           ))
